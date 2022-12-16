@@ -5,6 +5,8 @@ import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
 
+class Humanoid
+
 enum class LogType { D, I, W, E }
 
 const val TAG_DEBUG = "Humanoid"
@@ -30,15 +32,21 @@ fun Any?.logE(tag: String = "${TAG_DEBUG}E") = this.toString().log(tag, LogType.
 fun Any?.logH(tag: String = "${TAG_DEBUG}H") = this.toString().log(tag, LogType.I, true)
 
 
-private fun logLink(tag: String = "${TAG_DEBUG}H") {
+fun logLink(tag: String = "${TAG_DEBUG}H") {
     val stackTrace = Thread.currentThread().stackTrace
-
-    "fun ${stackTrace[4].methodName} called".logI(tag)
-    printLinkToString("logLink", tag, 2)
-}
-
-fun logLink() {
-    logLink("${TAG_DEBUG}H")
+    val currentFunctionIndex = stackTrace.indexOfFirst {
+        it.methodName.contains("logLink") // NOTE: this function name
+    }
+    val humanoidClassName = Humanoid::class.simpleName.toString()
+    stackTrace.forEachIndexed { index, it ->
+        if (index > currentFunctionIndex
+            && !it.fileName.startsWith(humanoidClassName)) {
+            val link =
+                "Go to: ${it.className}.${it.methodName}(${it.fileName}:${it.lineNumber})"
+            link.logD(tag)
+            return
+        }
+    }
 }
 
 private fun String.log(
@@ -60,18 +68,6 @@ private fun String.log(
     }
 
     return this
-}
-
-private fun printLinkToString(methodName: String, tag: String, methodIndex: Int = 0) {
-    val stackTrace = Thread.currentThread().stackTrace
-
-    val currentIndex = stackTrace.indexOfFirst {
-        it.methodName == methodName
-    }
-    val e = stackTrace[currentIndex + methodIndex]
-
-    val link = "at ${e.className}.${e.methodName}(${e.fileName}:${e.lineNumber})"
-    link.logD(tag)
 }
 
 // todo: use or remove
