@@ -9,30 +9,29 @@ class Humanoid
 
 enum class LogType { D, I, W, E }
 
-const val TAG_DEBUG = "Humanoid"
+const val TAG_HUMANOID = "Humanoid"
 
 private const val LOG_PART_SIZE = 4000
-
 private const val DEFAULT_INDENT_SPACES = 4
 
-private var enabled = true
+var defaultLogType = LogType.D
+var linkLogType = LogType.D
+var enabled = true
 
-fun enableHumanoidLogs() {
-    enabled = true
+fun Any?.logH(tag: String = "${TAG_HUMANOID}H", logType: LogType = defaultLogType) {
+    this.toString().log(tag, logType)
+    logLink()
 }
 
-fun disableHumanoidLogs() {
-    enabled = false
+fun logLink(tag: String = "${TAG_HUMANOID}H") {
+    getLinkElement()?.let {
+        val link =
+            "Go to: ${it.className}.${it.methodName}(${it.fileName}:${it.lineNumber})"
+        link.log(tag, linkLogType)
+    }
 }
 
-fun Any?.logD(tag: String = "${TAG_DEBUG}D") = this.toString().log(tag, LogType.D, false)
-fun Any?.logI(tag: String = "${TAG_DEBUG}I") = this.toString().log(tag, LogType.I, false)
-fun Any?.logW(tag: String = "${TAG_DEBUG}W") = this.toString().log(tag, LogType.W, false)
-fun Any?.logE(tag: String = "${TAG_DEBUG}E") = this.toString().log(tag, LogType.E, false)
-fun Any?.logH(tag: String = "${TAG_DEBUG}H") = this.toString().log(tag, LogType.I, true)
-
-
-fun logLink(tag: String = "${TAG_DEBUG}H") {
+private fun getLinkElement(): StackTraceElement? {
     val stackTrace = Thread.currentThread().stackTrace
     val currentFunctionIndex = stackTrace.indexOfFirst {
         it.methodName.contains("logLink") // NOTE: this function name
@@ -40,19 +39,17 @@ fun logLink(tag: String = "${TAG_DEBUG}H") {
     val humanoidClassName = Humanoid::class.simpleName.toString()
     stackTrace.forEachIndexed { index, it ->
         if (index > currentFunctionIndex
-            && !it.fileName.startsWith(humanoidClassName)) {
-            val link =
-                "Go to: ${it.className}.${it.methodName}(${it.fileName}:${it.lineNumber})"
-            link.logD(tag)
-            return
+            && !it.fileName.startsWith(humanoidClassName)
+        ) {
+            return it
         }
     }
+    throw IllegalStateException()
 }
 
 private fun String.log(
-    tag: String = TAG_DEBUG,
-    type: LogType = LogType.D,
-    withLink: Boolean = true,
+    tag: String = TAG_HUMANOID,
+    type: LogType
 ): String? {
     if (!enabled) return null // else {
 
@@ -63,16 +60,12 @@ private fun String.log(
         LogType.E -> Log.e(tag, this)
     }
 
-    if (withLink) {
-        logLink()
-    }
-
     return this
 }
 
 // todo: use or remove
 fun String.logJson(
-    tag: String = TAG_DEBUG,
+    tag: String = TAG_HUMANOID,
     type: LogType = LogType.D,
     indentSpaces: Int = DEFAULT_INDENT_SPACES
 ) {
@@ -116,7 +109,7 @@ fun String.logJson(
     }
 }
 
-fun logLong(message: String, tag: String = TAG_DEBUG, type: LogType = LogType.D) {
+fun logLong(message: String, tag: String = TAG_HUMANOID, type: LogType = LogType.D) {
     if (!enabled) return
 
     if (message.length > LOG_PART_SIZE) {
