@@ -7,8 +7,6 @@ import org.json.JSONObject
 
 class Humanoid
 
-enum class LogType { D, I, W, E }
-
 const val TAG_HUMANOID = "Humanoid"
 
 private const val LOG_PART_SIZE = 4000
@@ -18,10 +16,17 @@ var defaultLogType = LogType.D
 var linkLogType = LogType.D
 var enabled = true
 
+enum class LogType { D, I, W, E }
+
 fun Any?.logH(tag: String = "${TAG_HUMANOID}H", logType: LogType = defaultLogType) {
     this.toString().log(tag, logType)
     logLink()
 }
+
+fun Any?.logDebugH() = this?.logH(logType = LogType.D)
+fun Any?.logInfoH() = this?.logH(logType = LogType.I)
+fun Any?.logErrorH() = this?.logH(logType = LogType.E)
+fun Any?.logWarningH() = this?.logH(logType = LogType.W)
 
 fun logLink(tag: String = "${TAG_HUMANOID}H") {
     getLinkElement()?.let {
