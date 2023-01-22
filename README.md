@@ -21,9 +21,25 @@ override fun onCreate(savedInstanceState: Bundle?) {
 
 ## Implementation
 
-maven { url 'https://jitpack.io' }
+```groovy
+// settings.gradle:
 
-implementation 'com.github.e16din:humanoid:1.0.0'
+dependencyResolutionManagement {
+    repositories {
+        // ..
+        maven { url 'https://jitpack.io' }
+    }
+}
+```
+
+```groovy
+// build.gradle:
+
+dependencies {
+    // ..
+    implementation 'com.github.e16din:humanoid:1.0.0'
+}
+```
 
 
 
