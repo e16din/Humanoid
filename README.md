@@ -12,6 +12,10 @@ override fun onCreate(savedInstanceState: Bundle?) {
 }
 ```
 
+![slide_1](https://github.com/e16din/Humanoid/blob/master/README_slide_1.jpg)
+
+## Test drive video
+
 <div align="left">
       <a href="https://www.youtube.com/watch?v=65G61hYqiUk">
          <img src="https://img.youtube.com/vi/65G61hYqiUk/0.jpg" style="width:100%;">
