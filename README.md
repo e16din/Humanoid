@@ -11,10 +11,14 @@ override fun onCreate(savedInstanceState: Bundle?) {
     "Try to use and give me feedback :)".logH()
 }
 ```
+<br />
+<br />
 
 ![slide_1](https://github.com/e16din/Humanoid/blob/master/README_slide_1.jpg)
 
-## Test drive video
+<br />
+
+## Test drive video (Second Edition)
 
 <div align="left">
       <a href="https://www.youtube.com/watch?v=65G61hYqiUk">
